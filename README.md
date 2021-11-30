@@ -1,2 +1,2 @@
-# Simple-Mern-Todo
-Simple todo app following
+# Simple-Mern-Todo Back
+Simple back todo app
