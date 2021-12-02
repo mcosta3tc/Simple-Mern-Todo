@@ -1,17 +1,8 @@
 const express = require("express");
 const taskRouter = express.Router();
-const taskModel = require("../model/task");
+const taskController = require("../controller/taskController");
 
-taskRouter.post("/api/task/", async (req, res) => {
-    const { title } = req.body;
-    const createdTask = new taskModel(title);
-    try {
-        await createdTask.save();
-        console.log("Task Added");
-        res.sendStatus(200).send(createdTask);
-    } catch (e) {
-        console.log(e);
-    }
-});
+taskRouter.post("/api/task/", taskController.saveTask);
+taskRouter.get("/api/task/", taskController.findAll);
 
 module.exports = taskRouter;
