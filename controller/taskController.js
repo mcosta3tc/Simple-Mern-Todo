@@ -7,10 +7,12 @@ taskController.saveTask = async (req, res) => {
     const createdTask = new taskModel({ title });
     try {
         await createdTask.save();
-        console.log('Task Added');
         return res.sendStatus(201);
     } catch (e) {
-        return console.log(e);
+        console.error(e);
+        res.status(500).json({
+            error: 'Creation error',
+        });
     }
 };
 
@@ -19,7 +21,22 @@ taskController.findAll = async (req, res) => {
         const tasks = await taskModel.find();
         res.send(tasks);
     } catch (e) {
-        console.log(e);
+        res.status(500).json({
+            error: e,
+        });
+    }
+};
+
+taskController.deleteTask = async (req, res) => {
+    const id = req.params.id;
+    try {
+        await taskModel.findByIdAndDelete(id);
+        res.sendStatus(200);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({
+            error: 'Internal server error',
+        });
     }
 };
 
