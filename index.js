@@ -10,14 +10,10 @@ const cors = require('cors');
 app.use(
     cors({
         origin: process.env.ORIGIN,
+        optionsSuccessStatus: 200,
+        methods: 'GET, POST, PUT, DELETE, PATCH',
     })
 );
-
-app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', process.env.ORIGIN);
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
 
 app.use(express.json());
 app.use(taskRouter);
