@@ -3,8 +3,8 @@ const taskModel = require('../model/task');
 const taskController = {};
 
 taskController.saveTask = async (req, res) => {
-    const { title } = req.body;
-    const createdTask = new taskModel({ title });
+    const { title, category, active } = req.body;
+    const createdTask = new taskModel({ title, category, active });
     try {
         await createdTask.save();
         return res.sendStatus(201);
