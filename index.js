@@ -1,11 +1,16 @@
 require('dotenv').config();
+require('./helpers/init_mongodb');
 
 const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
+const createError = require('http-errors');
+
+const taskRouter = require('./Routes/Task.route');
+const authRouter = require('./Routes/Auth.route');
+
 const app = express();
 const port = process.env.PORT || 3001;
-const mongoose = require('mongoose');
-const taskRouter = require('./routes/task');
-const cors = require('cors');
 
 app.use(
     cors({
@@ -14,20 +19,27 @@ app.use(
         methods: 'GET, POST, PUT, DELETE, PATCH',
     })
 );
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+
 app.use(taskRouter);
+app.use('/auth', authRouter);
 
-const start = async () => {
-    try {
-        await mongoose.connect(process.env.URI);
-        console.log('DB Connected');
-        app.listen(port, () => {
-            console.log(`Listen on : ${port}`);
-        });
-    } catch (e) {
-        console.log(e);
-    }
-};
+app.use(async (req, res, next) => {
+    next(createError.NotFound());
+});
+app.use((err, req, res, next) => {
+    res.status(err.status || 500);
+    res.send({
+        error: {
+            status: err.status || 500,
+            message: err.message,
+        },
+    });
+    next();
+});
 
-start();
+app.listen(port, () => {
+    console.log(`Listen on : ${port}`);
+});
