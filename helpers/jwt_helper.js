@@ -1,12 +1,13 @@
 const JWT = require('jsonwebtoken');
 const createError = require('http-errors');
+const client = require('./init_redis');
 
 module.exports = {
     signAccessToken: (userId) => {
         return new Promise((resolve, reject) => {
             const payload = {};
             const secret = process.env.ACCESS_TOKEN_SECRET;
-            const options = { expiresIn: '1h', issuer: 'simple-mern-todo-front.vercel.app', audience: userId };
+            const options = { expiresIn: '15s', issuer: 'simple-mern-todo-front.vercel.app', audience: userId };
             JWT.sign(payload, secret, options, (err, token) => {
                 if (err) {
                     return reject(createError.InternalServerError());
@@ -36,6 +37,18 @@ module.exports = {
                     return reject(createError.Unauthorized());
                 }
                 const userId = payload.aud;
+                client.get(userId, (error, result) => {
+                    if (error) {
+                        console.log(error.message);
+                        reject(createError.InternalServerError());
+                        return;
+                    }
+                    if (refreshToken === result) {
+                        return resolve(userId);
+                    }
+                    reject(createError.InternalServerError());
+                });
+
                 resolve(userId);
             });
         });
@@ -53,7 +66,14 @@ module.exports = {
                 if (error) {
                     return reject(createError.InternalServerError());
                 }
-                resolve(token);
+                client.set(userId, token, 'ex', 365 * 24 * 60 * 60, (error) => {
+                    if (error) {
+                        console.log(error.message);
+                        reject(createError.InternalServerError());
+                        return;
+                    }
+                    resolve(token);
+                });
             });
         });
     },
