@@ -44,8 +44,6 @@ module.exports = {
                 throw createError.Unauthorized('Username/Password not valid');
             }
 
-            console.log(user);
-
             const accessToken = await signAccessToken(user.id);
             const refreshToken = await signRefreshToken(user.id);
 
