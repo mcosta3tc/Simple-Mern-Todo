@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const createError = require('http-errors');
 const client = require('./init_redis');
+const Logger = require('./logger');
 
 module.exports = {
     signAccessToken: (userId) => {
@@ -8,10 +9,11 @@ module.exports = {
             const payload = {};
             const secret = process.env.ACCESS_TOKEN_SECRET;
             const options = { expiresIn: '15s', issuer: 'simple-mern-todo-front.vercel.app', audience: userId };
-            JWT.sign(payload, secret, options, (err, token) => {
-                if (err) {
+            JWT.sign(payload, secret, options, (error, token) => {
+                if (error) {
                     return reject(createError.InternalServerError());
                 }
+                Logger.debug(`helpers/jwt_helpers :  signAccessToken() { JWT.sign() token : ${token} }`);
                 resolve(token);
             });
         });
@@ -27,6 +29,7 @@ module.exports = {
                 return next(createError.Unauthorized(message));
             }
             req.payload = payload;
+            Logger.debug(`helpers/jwt_helpers : verifyAccessToken() { JWT.verify() payload : ${payload} }`);
             next();
         });
     },
@@ -39,16 +42,15 @@ module.exports = {
                 const userId = payload.aud;
                 client.get(userId, (error, result) => {
                     if (error) {
-                        console.log(error.message);
                         reject(createError.InternalServerError());
                         return;
                     }
                     if (refreshToken === result) {
                         return resolve(userId);
                     }
+                    Logger.debug(`helpers/jwt_helpers : verifyRefreshToken() { client.get result : ${result} }`);
                     reject(createError.InternalServerError());
                 });
-
                 resolve(userId);
             });
         });
@@ -68,10 +70,10 @@ module.exports = {
                 }
                 client.set(userId, token, 'ex', 365 * 24 * 60 * 60, (error) => {
                     if (error) {
-                        console.log(error.message);
                         reject(createError.InternalServerError());
                         return;
                     }
+                    Logger.debug(`helpers/jwt_helpers : signRefreshToken() { JWT.sign() token : ${token} }`);
                     resolve(token);
                 });
             });

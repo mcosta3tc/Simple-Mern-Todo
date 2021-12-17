@@ -1,4 +1,5 @@
 const taskModel = require('../Models/Task.model');
+const Logger = require('../Helpers/logger');
 
 const taskController = {};
 
@@ -7,9 +8,9 @@ taskController.saveTask = async (req, res) => {
     const createdTask = new taskModel({ title, category, active });
     try {
         await createdTask.save();
+        Logger.debug(`controller/taskController : saveTask() { createdTask : ${createdTask} }`);
         return res.sendStatus(201);
     } catch (e) {
-        console.error(e);
         res.status(500).json({
             error: 'Creation error',
         });
@@ -19,6 +20,7 @@ taskController.saveTask = async (req, res) => {
 taskController.findAll = async (req, res) => {
     try {
         const tasks = await taskModel.find();
+        Logger.debug(`controller/taskController : findAll() { tasks : ${tasks} }`);
         res.send(tasks);
     } catch (e) {
         res.status(500).json({
@@ -31,9 +33,9 @@ taskController.deleteTask = async (req, res) => {
     const id = req.params.id;
     try {
         await taskModel.findByIdAndDelete(id);
+        Logger.debug(`controller/taskController : deleteTask() { task.id : ${id} deleted }`);
         res.sendStatus(200);
     } catch (e) {
-        console.error(e);
         res.status(500).json({
             error: 'Internal server error',
         });

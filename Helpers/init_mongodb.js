@@ -1,22 +1,24 @@
 const mongoose = require('mongoose');
+const Logger = require('./logger');
 
 mongoose
     .connect(process.env.URI)
     .then(() => {
-        console.log('MongooseDb Connected');
+        Logger.debug('MongooseDb Connected');
+        Logger.info('Database Connected');
     })
-    .catch((err) => console.log(err));
+    .catch((err) => Logger.error(err));
 
 mongoose.connection.on('connected', () => {
-    console.log('Mongoose Connected to DB');
+    Logger.debug('Mongoose Connected to DB');
 });
 
 mongoose.connection.on('error', (err) => {
-    console.log(err.message);
+    Logger.debug(err.message);
 });
 
 mongoose.connection.on('disconnected', () => {
-    console.log('Mongoose connection is disconnected');
+    Logger.debug('Mongoose connection is disconnected');
 });
 
 process.on('SIGINT', async () => {

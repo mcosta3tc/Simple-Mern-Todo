@@ -12,7 +12,8 @@
     "http-errors": "^1.8.1",
     "ioredis": "^4.28.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.14"
+    "mongoose": "^6.0.14",
+    "winston": "^3.3.3"
   },
   "scripts": {
     "dev": "nodemon index.js",
