@@ -56,14 +56,11 @@ module.exports = {
             );
 
             res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                path: '/auth/login',
                 maxAge: 30 * 24 * 60 * 60 * 1000,
             });
 
             res.json({
                 accessToken,
-                refreshToken,
                 userId: user.id,
             });
         } catch (e) {
@@ -75,37 +72,35 @@ module.exports = {
     },
     refreshToken: async (req, res, next) => {
         try {
-            const { refreshToken } = req.body;
+            const refreshToken = req.cookies.refreshToken;
+            console.log('refreshToken', refreshToken);
             if (!refreshToken) {
+                Logger.debug('refreshToken not', refreshToken);
                 throw createError.BadRequest();
             }
+            Logger.debug('refreshToken in', refreshToken);
 
             const userId = await verifyRefreshToken(refreshToken);
             const accessToken = await signAccessToken(userId);
-            const refToken = await signRefreshToken(userId);
 
-            Logger.debug(
-                `controller/authController : refreshToken() { UserId : ${userId} / accessToken : ${accessToken} / refreshToken : ${refreshToken}`
-            );
+            Logger.debug(accessToken);
 
-            res.send({ accessToken: accessToken, refreshToken: refToken });
+            res.send({ accessToken: accessToken });
         } catch (error) {
             next(error);
         }
     },
     logoutUser: async (req, res, next) => {
         try {
-            const { refreshToken } = req.body;
+            const refreshToken = req.cookies.refreshToken;
             if (!refreshToken) {
                 throw createError.BadRequest();
             }
             const userId = await verifyRefreshToken(refreshToken);
             client.del(userId, (error, value) => {
                 if (error) {
-                    console.log(error.message);
                     throw createError.InternalServerError();
                 }
-
                 Logger.debug(
                     `controller/authController : logoutUser() { UserId : ${userId} / refreshToken : ${refreshToken} / value : ${value}`
                 );

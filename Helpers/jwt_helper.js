@@ -34,6 +34,7 @@ module.exports = {
         });
     },
     verifyRefreshToken: (refreshToken) => {
+        Logger.debug(refreshToken);
         return new Promise((resolve, reject) => {
             JWT.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, payload) => {
                 if (error) {

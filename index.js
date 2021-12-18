@@ -4,24 +4,18 @@ require('./Helpers/init_redis');
 
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
 const Logger = require('./Helpers/logger');
 
-const taskRouter = require('./Routes/Task.route');
-const authRouter = require('./Routes/Auth.route');
-
-const { verifyAccessToken } = require('./Helpers/jwt_helper');
-
 const app = express();
 const port = process.env.PORT || 3001;
-
-app.use(cors({ credentials: true, origin: process.env.ORIGIN }));
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cookieParser());
 app.use(express.json());
 
-app.get('/protected', verifyAccessToken, async (req, res, next) => {
-    res.send('hello form protected');
-});
-
+const taskRouter = require('./Routes/Task.route');
+const authRouter = require('./Routes/Auth.route');
 app.use(taskRouter);
 app.use('/auth', authRouter);
 
