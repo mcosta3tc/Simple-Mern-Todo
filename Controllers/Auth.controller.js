@@ -70,8 +70,7 @@ module.exports = {
     },
     refreshToken: async (req, res, next) => {
         try {
-            const refreshToken = req.cookies.refreshToken;
-            console.log('refreshToken', refreshToken);
+            const { refreshToken } = req.body;
             if (!refreshToken) {
                 Logger.debug('refreshToken not', refreshToken);
                 throw createError.BadRequest();

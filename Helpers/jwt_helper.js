@@ -8,7 +8,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             const payload = {};
             const secret = process.env.ACCESS_TOKEN_SECRET;
-            const options = { expiresIn: '15s', issuer: 'simple-mern-todo-front.vercel.app', audience: userId };
+            const options = { expiresIn: '1y', issuer: 'simple-mern-todo-front.vercel.app', audience: userId };
             JWT.sign(payload, secret, options, (error, token) => {
                 if (error) {
                     return reject(createError.InternalServerError());
