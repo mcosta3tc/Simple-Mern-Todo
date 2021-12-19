@@ -9,7 +9,7 @@ const Logger = require('./Helpers/logger');
 
 const app = express();
 const port = process.env.PORT || 3001;
-app.use(cors({ credentials: true, origin: process.env.ORIGIN }));
+app.use(cors());
 app.use(express.json());
 
 const taskRouter = require('./Routes/Task.route');
