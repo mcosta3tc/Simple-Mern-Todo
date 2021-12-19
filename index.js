@@ -32,6 +32,8 @@ app.use((err, req, res, next) => {
     next();
 });
 
+console.log('deploy test');
+
 app.listen(port, () => {
     Logger.debug(`Server is up and running @ http://localhosts:${port}`);
     Logger.info('Server is up and running');
