@@ -4,8 +4,9 @@ const Logger = require('../Helpers/logger');
 const taskController = {};
 
 taskController.saveTask = async (req, res) => {
+    const userId = req.payload.aud;
     const { title, category, active } = req.body;
-    const createdTask = new taskModel({ title, category, active });
+    const createdTask = new taskModel({ title, category, active, author: userId });
     try {
         await createdTask.save();
         Logger.debug(`controller/taskController : saveTask() { createdTask : ${createdTask} }`);
@@ -18,8 +19,11 @@ taskController.saveTask = async (req, res) => {
 };
 
 taskController.findAll = async (req, res) => {
+    const userId = req.payload.aud;
+    console.log(userId);
+    Logger.debug('user', req.locals);
     try {
-        const tasks = await taskModel.find();
+        const tasks = await taskModel.find({ author: userId });
         Logger.debug(`controller/taskController : findAll() { tasks : ${tasks} }`);
         res.send(tasks);
     } catch (e) {

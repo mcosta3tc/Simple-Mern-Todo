@@ -18,14 +18,15 @@ module.exports = {
 
             const user = new User(result);
 
-            const savedUser = await user.save();
-            const accessToken = await signAccessToken(savedUser.id);
+            await user.save();
+            /*            const accessToken = await signAccessToken(savedUser.id);
             const refreshToken = await signRefreshToken(savedUser.id);
 
             Logger.debug(
                 `controller/authController : registerUser() { savedUser : ${user} / accessToken : ${accessToken} / refreshToken : ${refreshToken}`
             );
-            res.send({ accessToken, refreshToken });
+            res.send({ accessToken, refreshToken });*/
+            res.sendStatus(200);
         } catch (e) {
             if (e.isJoi === true) {
                 e.status = 422;

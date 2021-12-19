@@ -29,7 +29,9 @@ module.exports = {
                 return next(createError.Unauthorized(message));
             }
             req.payload = payload;
-            Logger.debug(`helpers/jwt_helpers : verifyAccessToken() { JWT.verify() payload : ${payload} }`);
+            Logger.debug(
+                `helpers/jwt_helpers : verifyAccessToken() { JWT.verify() payload : ${JSON.stringify(payload)} }`
+            );
             next();
         });
     },
