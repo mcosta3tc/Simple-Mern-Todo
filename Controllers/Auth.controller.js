@@ -56,12 +56,9 @@ module.exports = {
                 `controller/authController : loginUser() { Logged_User : ${user} / accessToken : ${accessToken} / refreshToken : ${refreshToken}`
             );
 
-            res.cookie('refreshToken', refreshToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-            });
-
             res.json({
                 accessToken,
+                refreshToken,
                 userId: user.id,
             });
         } catch (e) {
